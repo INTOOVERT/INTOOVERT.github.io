@@ -1,5 +1,7 @@
 # Muhtasim Khan — 3D Artist Portfolio
 
+Live at **https://intoovert.me** (GitHub Pages via `INTOOVERT.github.io`).
+
 A high-end, interactive personal portfolio for 3D art, digital art and interactive/visual work.
 Built so the work can be shown **without exposing downloadable 3D model files** — pieces are
 presented as 360° turntable videos, rendered clips, and on-demand Sketchfab embeds.
