@@ -1,0 +1,235 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* warm, low-contrast dark: softer on the eyes than pure black */
+  --bg: #14110e;
+  --fg: #ede4d3;
+  --surface-1: #14110e;
+  --surface-2: #1a1613;
+  --card-bg: rgba(237, 228, 211, 0.04);
+  --card-bg-hover: rgba(237, 228, 211, 0.07);
+  --card-border: rgba(237, 228, 211, 0.1);
+  --card-border-hover: rgba(191, 166, 136, 0.35);
+  --hairline: rgba(237, 228, 211, 0.11);
+  --accent: 193, 104, 92;
+  color-scheme: dark;
+}
+
+html.light {
+  --bg: #f0e8d9;
+  --fg: #2a241f;
+  --surface-1: #f0e8d9;
+  --surface-2: #e7ddc9;
+  --card-bg: rgba(42, 36, 31, 0.04);
+  --card-bg-hover: rgba(42, 36, 31, 0.06);
+  --card-border: rgba(90, 80, 70, 0.14);
+  --card-border-hover: rgba(193, 104, 92, 0.4);
+  --hairline: rgba(90, 80, 70, 0.16);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Hide native cursor only on devices with a fine pointer (desktop) */
+@media (hover: hover) and (pointer: fine) {
+  .custom-cursor-active * {
+    cursor: none !important;
+  }
+}
+
+::selection {
+  background: rgba(193, 104, 92, 0.35);
+  color: #f2e9d8;
+}
+
+/* Thin custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(193, 104, 92, 0.35);
+  border-radius: 999px;
+}
+
+@layer components {
+  .container-px {
+    @apply px-6 md:px-10 lg:px-16;
+  }
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-[0.35em] text-accent-glow/80;
+  }
+  .glass {
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+  /* sections share the single fixed page backdrop so scrolling feels seamless */
+  .surface-1,
+  .surface-2 {
+    background: transparent;
+  }
+  .card-surface {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+  .card-surface:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--card-border-hover);
+  }
+  .hairline {
+    background: var(--hairline);
+  }
+  .border-hairline {
+    border-color: var(--card-border);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- holographic foil card (rotation locked: only the foil tracks the pointer) ---- */
+.holo-card {
+  --mx: 50%;
+  --my: 50%;
+  --posx: 50%;
+  --posy: 50%;
+  --rx: 0deg;
+  --ry: 0deg;
+  --rz: 0deg;
+  --o: 0;
+  position: relative;
+  border-radius: 1.5rem;
+  perspective: 900px;
+  transform: translateZ(0) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)) scale(1);
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.holo-card--strong {
+  perspective: 1100px;
+  transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.holo-card:hover {
+  transform: translateZ(0) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)) scale(1.025);
+}
+
+.holo-card__shine,
+.holo-card__glare {
+  content: "";
+  position: absolute;
+  inset: 0.5rem;
+  border-radius: 1rem;
+  pointer-events: none;
+  opacity: var(--o);
+  transition: opacity 0.3s ease;
+  transform: translateZ(18px);
+}
+
+/* iridescent foil sheen */
+.holo-card__shine {
+  background-image: linear-gradient(
+    115deg,
+    rgba(255, 119, 115, 0.45) 0%,
+    rgba(255, 237, 95, 0.4) 18%,
+    rgba(168, 255, 95, 0.4) 36%,
+    rgba(131, 255, 247, 0.4) 54%,
+    rgba(120, 148, 255, 0.45) 72%,
+    rgba(216, 117, 255, 0.45) 90%,
+    rgba(255, 119, 115, 0.45) 100%
+  );
+  background-size: 220% 220%;
+  background-position: var(--posx) var(--posy);
+  mix-blend-mode: color-dodge;
+  filter: brightness(0.85) contrast(1.5) saturate(1.2);
+}
+
+/* secondary fine-grain foil pattern for texture */
+.holo-card__shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: repeating-linear-gradient(
+    -65deg,
+    rgba(255, 255, 255, 0.12) 0px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(255, 255, 255, 0.12) 4px
+  );
+  background-size: 200% 200%;
+  background-position: var(--posx) var(--posy);
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+/* bright glare following the pointer */
+.holo-card__glare {
+  background: radial-gradient(
+    circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 25%,
+    transparent 45%
+  );
+  mix-blend-mode: overlay;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .holo-card:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,23 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+
+# Scraped reference data (not part of the site)
+.fiverr.html
+
+# Original source assets (kept out of the build; copies live in public/media)
+/assets-backup
+/0001.mp4
+/alat0001-12.mp4
+/aold0001-12.mp4
+/captain-cold-premiere-0001.mp4
+/hyperion-premiere-0001-1.mp4
+/P01_pixel___2019345024.png
