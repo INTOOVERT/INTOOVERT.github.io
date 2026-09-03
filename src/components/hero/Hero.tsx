@@ -73,7 +73,7 @@ function isTypingTarget(el: EventTarget | null) {
   );
 }
 
-export default function Hero() {
+export default function Hero({ onReady }: { onReady: () => void }) {
   const ref = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLButtonElement>(null);
@@ -173,7 +173,7 @@ export default function Hero() {
 
           <Suspense fallback={null}>
             <Float speed={1.1} rotationIntensity={0.1} floatIntensity={0.3}>
-              <RetroComputer screen={screen} />
+              <RetroComputer screen={screen} onReady={onReady} />
             </Float>
             <Preload all />
           </Suspense>

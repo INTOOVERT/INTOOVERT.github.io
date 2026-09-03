@@ -101,9 +101,17 @@ function Speakers() {
  * Edward Hinrichsen). We keep his baked Commodore 710 model + texture and only
  * swap the screen contents for the interactive terminal, run through our CRT shader.
  */
-export default function RetroComputer({ screen }: { screen: TerminalScreen }) {
+export default function RetroComputer({
+  screen,
+  onReady,
+}: {
+  screen: TerminalScreen;
+  onReady: () => void;
+}) {
   const group = useRef<THREE.Group>(null);
   const screenObj = useRef<THREE.Object3D | null>(null);
+  const renderedFrames = useRef(0);
+  const readyReported = useRef(false);
   const { viewport } = useThree();
 
   const { scene } = useGLTF(MODEL);
@@ -229,6 +237,15 @@ export default function RetroComputer({ screen }: { screen: TerminalScreen }) {
       screenObj.current.getWorldPosition(_tmp);
       heroFocus.screenX = _tmp.x;
       heroFocus.screenY = _tmp.y;
+    }
+
+    // Suspense only mounts this component after its models and textures load.
+    // Waiting for a second frame also guarantees one complete WebGL render
+    // before the page-level loader is allowed to disappear.
+    renderedFrames.current += 1;
+    if (!readyReported.current && renderedFrames.current >= 2) {
+      readyReported.current = true;
+      onReady();
     }
   });
 
