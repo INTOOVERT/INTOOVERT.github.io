@@ -21,7 +21,11 @@ import ToolsMarquee from "./components/ToolsMarquee";
 export default function App() {
   const { theme, toggle } = useTheme();
   const [heroReady, setHeroReady] = useState(false);
+  const [heroProgress, setHeroProgress] = useState(0);
   const handleHeroReady = useCallback(() => setHeroReady(true), []);
+  const handleHeroProgress = useCallback((value: number) => {
+    setHeroProgress((current) => Math.max(current, value));
+  }, []);
   useLenis();
   useHeroWorkSnap();
 
@@ -34,13 +38,13 @@ export default function App() {
         <div className="absolute right-[4%] top-[58%] h-[38vmax] w-[38vmax] rounded-full bg-[radial-gradient(circle,rgba(191,166,136,0.06),transparent_60%)] blur-3xl" />
       </div>
 
-      <Preloader ready={heroReady} />
+      <Preloader ready={heroReady} progress={heroProgress} />
       <Cursor />
       <ScrollProgress />
       <Navbar theme={theme} onToggleTheme={toggle} />
 
       <main>
-        <Hero onReady={handleHeroReady} />
+        <Hero onReady={handleHeroReady} onProgress={handleHeroProgress} />
         <HorizontalPortfolio />
         <ToolsMarquee />
         <SketchfabSection />

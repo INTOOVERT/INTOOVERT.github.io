@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useProgress } from "@react-three/drei";
 
 const BOOT_LINES = [
   "mkOS BIOS v1.0",
@@ -10,13 +9,18 @@ const BOOT_LINES = [
 ];
 
 /** CRT boot screen that stays up until the hero model has rendered. */
-export default function Preloader({ ready }: { ready: boolean }) {
+export default function Preloader({
+  ready,
+  progress,
+}: {
+  ready: boolean;
+  progress: number;
+}) {
   const [shown, setShown] = useState(0);
   const [done, setDone] = useState(false);
   const [gone, setGone] = useState(false);
   const [displayProgress, setDisplayProgress] = useState(0);
   const startedAt = useRef(performance.now());
-  const { progress } = useProgress();
 
   useEffect(() => {
     const lineTimer = setInterval(() => {

@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, AdaptiveDpr, Preload } from "@react-three/drei";
+import { Float, AdaptiveDpr, Preload, useProgress } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import RetroComputer, { heroFocus, portraitFactor } from "./RetroComputer";
@@ -73,7 +73,23 @@ function isTypingTarget(el: EventTarget | null) {
   );
 }
 
-export default function Hero({ onReady }: { onReady: () => void }) {
+function AssetLoadReporter({ onProgress }: { onProgress: (value: number) => void }) {
+  const { progress } = useProgress();
+
+  useEffect(() => {
+    onProgress(progress);
+  }, [onProgress, progress]);
+
+  return null;
+}
+
+export default function Hero({
+  onReady,
+  onProgress,
+}: {
+  onReady: () => void;
+  onProgress: (value: number) => void;
+}) {
   const ref = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLButtonElement>(null);
@@ -172,6 +188,7 @@ export default function Hero({ onReady }: { onReady: () => void }) {
           <ScrollRig heroRef={ref} />
 
           <Suspense fallback={null}>
+            <AssetLoadReporter onProgress={onProgress} />
             <Float speed={1.1} rotationIntensity={0.1} floatIntensity={0.3}>
               <RetroComputer screen={screen} onReady={onReady} />
             </Float>
