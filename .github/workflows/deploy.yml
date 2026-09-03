@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths-ignore:
       - "docs/**"
+      - "assets/**"
+      - "media/**"
+      - "models/**"
+      - "textures/**"
+      - "index.html"
+      - ".nojekyll"
   workflow_dispatch:
 
 permissions:
@@ -28,13 +34,27 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Copy build into docs/
+      - name: Publish build to site root
         run: |
+          cp dist/index.html index.html
+          rm -rf assets media models textures
+          cp -r dist/assets assets
+          cp -r dist/media media
+          cp -r dist/models models
+          cp -r dist/textures textures
+          cp dist/.nojekyll .nojekyll
           rm -rf docs
           cp -r dist docs
 
-      - name: Commit docs/
+      - name: Commit published site
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Deploy site to docs/
-          file_pattern: docs/**
+          commit_message: Deploy site to root
+          file_pattern: |
+            index.html
+            assets/**
+            media/**
+            models/**
+            textures/**
+            .nojekyll
+            docs/**

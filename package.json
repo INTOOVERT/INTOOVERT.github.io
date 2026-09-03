@@ -5,9 +5,9 @@
   "type": "module",
   "description": "High-end 3D / digital art portfolio for Muhtasim Khan",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "vite index.dev.html",
+    "build": "tsc && vite build && node -e \"require('fs').copyFileSync('dist/index.dev.html','dist/index.html')\"",
+    "preview": "vite preview index.dev.html"
   },
   "dependencies": {
     "@react-three/drei": "^9.114.0",

@@ -16,6 +16,7 @@ export default defineConfig({
   build: {
     target: "es2020",
     rollupOptions: {
+      input: fileURLToPath(new URL("./index.dev.html", import.meta.url)),
       output: {
         manualChunks: {
           three: ["three"],
