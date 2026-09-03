@@ -8,10 +8,14 @@ const BOOT_LINES = [
   "starting crt driver",
 ];
 
+/** Fake progress ticks while assets load; holds at 85% until the hero is ready. */
+const FAKE_STEPS = [20, 30, 67, 85] as const;
+const STEP_MS = 700;
+
 /** CRT boot screen that stays up until the hero model has rendered. */
 export default function Preloader({
   ready,
-  progress,
+  progress: _progress,
 }: {
   ready: boolean;
   progress: number;
@@ -19,8 +23,23 @@ export default function Preloader({
   const [shown, setShown] = useState(0);
   const [done, setDone] = useState(false);
   const [gone, setGone] = useState(false);
-  const [displayProgress, setDisplayProgress] = useState(0);
+  const [fakeProgress, setFakeProgress] = useState(FAKE_STEPS[0]);
   const startedAt = useRef(performance.now());
+
+  useEffect(() => {
+    let step = 1;
+    const timer = window.setInterval(() => {
+      if (step >= FAKE_STEPS.length) {
+        window.clearInterval(timer);
+        return;
+      }
+      setFakeProgress(FAKE_STEPS[step]);
+      step += 1;
+    }, STEP_MS);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const displayProgress = ready ? 100 : fakeProgress;
 
   useEffect(() => {
     const lineTimer = setInterval(() => {
@@ -34,11 +53,6 @@ export default function Preloader({
     }, 260);
     return () => clearInterval(lineTimer);
   }, []);
-
-  useEffect(() => {
-    const next = ready ? 100 : Math.min(progress, 95);
-    setDisplayProgress((current) => Math.max(current, next));
-  }, [progress, ready]);
 
   useEffect(() => {
     if (!ready) return;
